@@ -1,0 +1,98 @@
+/**
+ * Custom styles extending rakui-css
+ * Only styles that are not available in the library
+ */
+
+/* ==========================================================================
+   Section Styling
+   ========================================================================== */
+
+section[id] {
+  scroll-margin-top: 60px;
+}
+
+/* ==========================================================================
+   Bio Photo
+   ========================================================================== */
+
+.bio-photo {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  background-color: var(--color-accent);
+}
+
+.band-photo {
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  object-fit: cover;
+  margin-bottom: var(--spacing-base);
+}
+
+/* ==========================================================================
+   Contact Form
+   ========================================================================== */
+
+.form-message {
+  margin-bottom: var(--spacing-base);
+}
+
+/* ==========================================================================
+   Mobile language selector
+   ========================================================================== */
+
+.nav-mobile-links .language-selector {
+  width: 100%;
+  margin-top: var(--spacing-base);
+}
+
+/* ==========================================================================
+   Language Selector Styling
+   ========================================================================== */
+
+.language-selector {
+  padding: var(--spacing-sm) var(--spacing-md);
+  min-width: 60px;
+}
+
+.nav-links .language-selector {
+  border: var(--border-standard);
+}
+
+/* ==========================================================================
+   Geometric Mesh Background
+   ========================================================================== */
+
+.section {
+  position: relative;
+  overflow: hidden;
+}
+
+.geometric-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.geometric-bg line {
+  stroke: currentColor;
+  stroke-width: 1px;
+  opacity: 0.12;
+}
+
+/* Ensure content stays above the mesh */
+.section > .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .geometric-bg line {
+    animation: none;
+  }
+}

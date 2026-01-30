@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "about": "About",
+    "work": "My Work",
+    "bands": "My Bands",
+    "services": "Services",
+    "contact": "Contact"
+  },
+  "about": {
+    "title": "About Me",
+    "bio": "Hey! I'm Etienne, a drummer and producer based in France. I've been playing drums for over 10 years with bands like Colossus of Destiny, Ways. and Thirteen Lines. I studied jazz at CIM Paris, gave drum lessons for a while, even did some carpentry (long story). Now I'm focus on making your music sound huge. Let's work together!"
+  },
+  "work": {
+    "title": "My Work",
+    "placeholder": "Music player coming soon..."
+  },
+  "bands": {
+    "title": "My Bands",
+    "colossus": {
+      "name": "Colossus of Destiny",
+      "description": "Colossus of Destiny was born in the Paris region in 2010. After two EPs and their debut album \"In Lesser Brightness\" (2013), inspired by Mastodon, Gojira, and Baroness, the band toured Cuba in 2017. Their LP \"Last Call\" (2020) introduced progressive and post-rock elements with influences from Underoath and Devil Sold His Soul. With \"Peter Palmer\" (2022), the band shifted to a more modern, hardcore-driven sound. In 2024, \"Beyond the Shallow Mind\" continued this direction. In 2025, \"Jerry June\" deepens their post-metal identity with a raw, intense track accompanied by a bold cinematic music video."
+    },
+    "ways": {
+      "name": "Ways.",
+      "description": "Ways. has been exploring a blend of Alternative, Metal, and Post-Hardcore since 2016, drawing influence from bands such as Architects and Underoath. The band has shared the stage with artists like Sidilarsen, Bukowski, Resolve, Napoleon, Svalbard, Alpha Wolf, Dropdead Chaos, and Akiavel, toured in Spain, performed in Cuba in 2019, and appeared at the Vagos Metal Fest alongside Dagoba and Jinjer. In 2024–2025, Ways. is promoting their EP \"Are we still alive?\" through a European tour, with notable appearances at Kave Fest, In Your Fest, Foud’Rock, Viry Tattoo Festival, and La Tour Mets Les Voiles. The band is currently working on their first full-length album, aiming to keep pushing their music even further."
+    }
+  },
+  "services": {
+    "title": "Services",
+    "mixing": {
+      "title": "Mixing",
+      "description": "I'll make your record sound modern, punchy and professional. Free sample mix available so we can build trust first!"
+    },
+    "mastering": {
+      "title": "Mastering",
+      "description": "The final polish your music deserves. Loud, clear, and ready for streaming platforms."
+    },
+    "midi": {
+      "title": "MIDI Drums",
+      "description": "As a real drummer, I can make your MIDI drums sound like an actual human played them. Realistic feel guaranteed."
+    },
+    "cta": "Order on Fiverr"
+  },
+  "contact": {
+    "title": "Contact",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "submit": "Send Message",
+    "success": "Message sent! Thank you for reaching out.",
+    "error": "Something went wrong. Please try again."
+  },
+  "footer": {
+    "rights": "All rights reserved."
+  }
+}

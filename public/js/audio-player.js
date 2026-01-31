@@ -4,6 +4,50 @@
  */
 class AudioPlayer {
   static instances = [];
+  static cachedColors = null;
+
+  /**
+   * Resolve CSS color variables to hex values (cached globally)
+   */
+  static getColors() {
+    if (AudioPlayer.cachedColors) {
+      return AudioPlayer.cachedColors;
+    }
+
+    // Create a temporary element to resolve CSS color values
+    // This handles light-dark() and other CSS color functions
+    const temp = document.createElement('div');
+    temp.style.display = 'none';
+    document.body.appendChild(temp);
+
+    const getResolvedColor = (cssVar, fallback) => {
+      temp.style.color = `var(${cssVar})`;
+      const resolved = getComputedStyle(temp).color;
+      // Convert rgb(r, g, b) to hex
+      const match = resolved.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+      if (match) {
+        const [, r, g, b] = match;
+        return `#${[r, g, b].map(x => parseInt(x).toString(16).padStart(2, '0')).join('')}`;
+      }
+      return fallback;
+    };
+
+    AudioPlayer.cachedColors = {
+      waveColor: getResolvedColor('--color-muted', '#666666'),
+      progressColor: getResolvedColor('--color-fg', '#000000'),
+      cursorColor: getResolvedColor('--color-fg', '#000000')
+    };
+
+    document.body.removeChild(temp);
+    return AudioPlayer.cachedColors;
+  }
+
+  /**
+   * Invalidate color cache (called on theme change)
+   */
+  static invalidateColorCache() {
+    AudioPlayer.cachedColors = null;
+  }
 
   constructor(playerEl) {
     this.playerEl = playerEl;
@@ -26,37 +70,8 @@ class AudioPlayer {
     this.bindThemeChange();
   }
 
-  getColors() {
-    // Create a temporary element to resolve CSS color values
-    // This handles light-dark() and other CSS color functions
-    const temp = document.createElement('div');
-    temp.style.display = 'none';
-    document.body.appendChild(temp);
-
-    const getResolvedColor = (cssVar, fallback) => {
-      temp.style.color = `var(${cssVar})`;
-      const resolved = getComputedStyle(temp).color;
-      // Convert rgb(r, g, b) to hex
-      const match = resolved.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-      if (match) {
-        const [, r, g, b] = match;
-        return `#${[r, g, b].map(x => parseInt(x).toString(16).padStart(2, '0')).join('')}`;
-      }
-      return fallback;
-    };
-
-    const colors = {
-      waveColor: getResolvedColor('--color-muted', '#666666'),
-      progressColor: getResolvedColor('--color-fg', '#000000'),
-      cursorColor: getResolvedColor('--color-fg', '#000000')
-    };
-
-    document.body.removeChild(temp);
-    return colors;
-  }
-
   createWaveSurfer() {
-    const colors = this.getColors();
+    const colors = AudioPlayer.getColors();
 
     this.wavesurfer = WaveSurfer.create({
       container: this.waveformEl,
@@ -122,7 +137,9 @@ class AudioPlayer {
   bindThemeChange() {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     mediaQuery.addEventListener('change', () => {
-      this.updateColors();
+      // Invalidate cache and update all instances
+      AudioPlayer.invalidateColorCache();
+      AudioPlayer.instances.forEach(instance => instance.updateColors());
     });
   }
 
@@ -148,7 +165,7 @@ class AudioPlayer {
   }
 
   updateColors() {
-    const colors = this.getColors();
+    const colors = AudioPlayer.getColors();
     this.wavesurfer.setOptions({
       waveColor: colors.waveColor,
       progressColor: colors.progressColor,

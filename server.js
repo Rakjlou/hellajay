@@ -2,9 +2,43 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const nodemailer = require('nodemailer');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const { body, validationResult } = require('express-validator');
+const escapeHtml = require('escape-html');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Security headers with helmet
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "blob:"],
+      mediaSrc: ["'self'", "blob:"],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'"],
+      frameSrc: ["'none'"],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"]
+    }
+  }
+}));
+
+// Rate limiting for contact form
+const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 requests per window
+  message: { success: false, error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+// Valid services whitelist
+const VALID_SERVICES = ['editing', 'mixing', 'mastering', 'production', 'midiDrums'];
 
 // Email configuration
 const emailTransporter = nodemailer.createTransport({
@@ -85,21 +119,54 @@ app.get('/', (req, res) => res.render('index', { audioFiles: getAudioFiles() }))
 app.get('/en', (req, res) => res.render('index', { audioFiles: getAudioFiles() }));
 app.get('/fr', (req, res) => res.render('index', { audioFiles: getAudioFiles() }));
 
-// API endpoint for contact form
-app.post('/api/contact', async (req, res) => {
-  const { email, bandName, numberOfSongs, links, services, message } = req.body;
+// Contact form validation rules
+const contactValidation = [
+  body('email')
+    .isEmail().withMessage('Valid email is required')
+    .isLength({ max: 254 }).withMessage('Email too long')
+    .normalizeEmail(),
+  body('message')
+    .notEmpty().withMessage('Message is required')
+    .isLength({ max: 5000 }).withMessage('Message too long (max 5000 characters)')
+    .trim(),
+  body('bandName')
+    .optional()
+    .isLength({ max: 200 }).withMessage('Band name too long')
+    .trim(),
+  body('numberOfSongs')
+    .optional()
+    .isLength({ max: 50 }).withMessage('Number of songs too long')
+    .trim(),
+  body('links')
+    .optional()
+    .isLength({ max: 1000 }).withMessage('Links too long')
+    .trim(),
+  body('services')
+    .optional()
+    .customSanitizer(value => {
+      // Handle services - can be a string (single checkbox) or array (multiple checkboxes)
+      const arr = Array.isArray(value) ? value : (value ? [value] : []);
+      // Filter to only valid services
+      return arr.filter(s => VALID_SERVICES.includes(s));
+    })
+];
 
-  // Validate required fields (only email and message are required)
-  if (!email || !message) {
+// API endpoint for contact form with rate limiting and validation
+app.post('/api/contact', contactLimiter, contactValidation, async (req, res) => {
+  // Check validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
     return res.status(400).json({
       success: false,
-      error: 'Email and message are required'
+      error: errors.array()[0].msg
     });
   }
 
-  // Handle services - can be a string (single checkbox) or array (multiple checkboxes)
-  const selectedServices = services
-    ? (Array.isArray(services) ? services : [services]).join(', ')
+  const { email, bandName, numberOfSongs, links, services, message } = req.body;
+
+  // Format services for display
+  const selectedServices = services && services.length > 0
+    ? services.join(', ')
     : 'None selected';
 
   console.log('Contact form submission:', { email, bandName, numberOfSongs, links, services: selectedServices, message });
@@ -109,6 +176,14 @@ app.post('/api/contact', async (req, res) => {
   if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD && contactEmail) {
     try {
       const subjectName = bandName || email;
+      // Escape all user inputs for HTML email to prevent XSS
+      const safeEmail = escapeHtml(email);
+      const safeBandName = escapeHtml(bandName || 'Not provided');
+      const safeNumberOfSongs = escapeHtml(numberOfSongs || 'Not provided');
+      const safeLinks = escapeHtml(links || 'Not provided');
+      const safeServices = escapeHtml(selectedServices);
+      const safeMessage = escapeHtml(message).replace(/\n/g, '<br>');
+
       await emailTransporter.sendMail({
         from: process.env.GMAIL_USER,
         replyTo: email,
@@ -118,14 +193,14 @@ app.post('/api/contact', async (req, res) => {
         text: `New message from the Hellajay website contact form:\n\nEmail: ${email}\nBand/Project Name: ${bandName || 'Not provided'}\nNumber of songs: ${numberOfSongs || 'Not provided'}\nLinks: ${links || 'Not provided'}\nServices: ${selectedServices}\n\nMessage:\n${message}`,
         html: `
           <h2>New message from the Hellajay website</h2>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Band/Project Name:</strong> ${bandName || 'Not provided'}</p>
-          <p><strong>Number of songs:</strong> ${numberOfSongs || 'Not provided'}</p>
-          <p><strong>Links:</strong> ${links || 'Not provided'}</p>
-          <p><strong>Services:</strong> ${selectedServices}</p>
+          <p><strong>Email:</strong> ${safeEmail}</p>
+          <p><strong>Band/Project Name:</strong> ${safeBandName}</p>
+          <p><strong>Number of songs:</strong> ${safeNumberOfSongs}</p>
+          <p><strong>Links:</strong> ${safeLinks}</p>
+          <p><strong>Services:</strong> ${safeServices}</p>
           <hr>
           <p><strong>Message:</strong></p>
-          <p>${message.replace(/\n/g, '<br>')}</p>
+          <p>${safeMessage}</p>
         `
       });
       console.log('Email sent successfully');
@@ -138,6 +213,15 @@ app.post('/api/contact', async (req, res) => {
   res.json({
     success: true,
     message: 'Message received! Thank you for reaching out.'
+  });
+});
+
+// Global error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err.message);
+  res.status(500).json({
+    success: false,
+    error: 'An unexpected error occurred'
   });
 });
 

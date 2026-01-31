@@ -1,9 +1,32 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Email configuration
+const emailTransporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD
+  }
+});
+
+// Verify email transporter on startup (only if credentials are configured)
+if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+  emailTransporter.verify((error) => {
+    if (error) {
+      console.error('Email transporter error:', error.message);
+    } else {
+      console.log('Email transporter is ready');
+    }
+  });
+} else {
+  console.warn('Email credentials not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD environment variables.');
+}
 
 // Load translations at startup
 const translations = {
@@ -63,7 +86,7 @@ app.get('/en', (req, res) => res.render('index', { audioFiles: getAudioFiles() }
 app.get('/fr', (req, res) => res.render('index', { audioFiles: getAudioFiles() }));
 
 // API endpoint for contact form
-app.post('/api/contact', (req, res) => {
+app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
 
   // Validate required fields
@@ -74,8 +97,34 @@ app.post('/api/contact', (req, res) => {
     });
   }
 
-  // Log the submission (in production: send email, store in DB, etc.)
   console.log('Contact form submission:', { name, email, message });
+
+  // Send email if credentials are configured
+  const contactEmail = process.env.CONTACT_EMAIL;
+  if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD && contactEmail) {
+    try {
+      await emailTransporter.sendMail({
+        from: process.env.GMAIL_USER,
+        replyTo: email,
+        to: contactEmail,
+        cc: email,
+        subject: `[Hellajay] Message from ${name}`,
+        text: `New message from the Hellajay website contact form:\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+        html: `
+          <h2>New message from the Hellajay website</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <hr>
+          <p><strong>Message:</strong></p>
+          <p>${message.replace(/\n/g, '<br>')}</p>
+        `
+      });
+      console.log('Email sent successfully');
+    } catch (error) {
+      console.error('Failed to send email:', error.message);
+      // Don't fail the request if email fails - still acknowledge the submission
+    }
+  }
 
   res.json({
     success: true,

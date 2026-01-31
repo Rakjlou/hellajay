@@ -13,6 +13,7 @@
   "dependencies": {
     "ejs": "^3.1.10",
     "express": "^5.2.1",
+    "nodemailer": "^7.0.13",
     "rakui-css": "^1.0.0"
   }
 }

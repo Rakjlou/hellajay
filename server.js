@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -42,10 +43,24 @@ app.use('/css/rakui.css', express.static(path.join(__dirname, 'node_modules/raku
 // Parse JSON bodies (for contact form API)
 app.use(express.json());
 
+// Scan work directory for audio files
+function getAudioFiles() {
+  const workDir = path.join(__dirname, 'public', 'work');
+  if (!fs.existsSync(workDir)) return [];
+
+  const extensions = ['.mp3', '.wav', '.ogg', '.m4a', '.flac'];
+  return fs.readdirSync(workDir)
+    .filter(file => extensions.includes(path.extname(file).toLowerCase()))
+    .map(file => ({
+      url: `/work/${encodeURIComponent(file)}`,
+      title: path.basename(file, path.extname(file))
+    }));
+}
+
 // Page routes
-app.get('/', (req, res) => res.render('index'));
-app.get('/en', (req, res) => res.render('index'));
-app.get('/fr', (req, res) => res.render('index'));
+app.get('/', (req, res) => res.render('index', { audioFiles: getAudioFiles() }));
+app.get('/en', (req, res) => res.render('index', { audioFiles: getAudioFiles() }));
+app.get('/fr', (req, res) => res.render('index', { audioFiles: getAudioFiles() }));
 
 // API endpoint for contact form
 app.post('/api/contact', (req, res) => {

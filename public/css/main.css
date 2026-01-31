@@ -96,3 +96,146 @@ section[id] {
     animation: none;
   }
 }
+
+/* ==========================================================================
+   Audio Player
+   ========================================================================== */
+
+.audio-player-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.audio-player {
+  padding: var(--spacing-lg);
+  border: var(--border-standard);
+  background-color: var(--color-bg);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "header header"
+    "controls waveform";
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.audio-player-header {
+  grid-area: header;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+}
+
+.audio-track-title {
+  font-weight: bold;
+}
+
+.audio-time {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+.audio-controls {
+  grid-area: controls;
+}
+
+.audio-waveform {
+  grid-area: waveform;
+  height: 52px;
+  cursor: pointer;
+}
+
+.audio-play-btn {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--border-standard);
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-size: var(--text-lg);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.audio-play-btn:hover,
+.audio-play-btn:focus {
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+  outline: none;
+}
+
+.audio-play-btn[data-playing="false"] .audio-icon-pause {
+  display: none;
+}
+
+.audio-play-btn[data-playing="true"] .audio-icon-play {
+  display: none;
+}
+
+/* Loading state */
+.audio-player.loading .audio-waveform::after {
+  content: "Loading...";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+}
+
+/* Error state */
+.audio-player.error .audio-waveform::after {
+  content: "Error loading audio";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--color-fg);
+  font-family: var(--font-mono);
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Responsive */
+@media (max-width: 639px) {
+  .audio-player {
+    padding: var(--spacing-md);
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "header controls"
+      "waveform waveform";
+  }
+
+  .audio-waveform {
+    height: 80px;
+  }
+
+  .audio-play-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .audio-player-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+}

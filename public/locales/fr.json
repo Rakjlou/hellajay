@@ -12,7 +12,10 @@
   },
   "work": {
     "title": "Mon travail",
-    "placeholder": "Lecteur audio bientôt disponible..."
+    "placeholder": "Lecteur audio bientôt disponible...",
+    "trackTitle": "Mix Exemple",
+    "play": "Lecture",
+    "pause": "Pause"
   },
   "bands": {
     "title": "Mes groupes",

@@ -12,7 +12,10 @@
   },
   "work": {
     "title": "My Work",
-    "placeholder": "Music player coming soon..."
+    "placeholder": "Music player coming soon...",
+    "trackTitle": "Sample Mix",
+    "play": "Play",
+    "pause": "Pause"
   },
   "bands": {
     "title": "My Bands",

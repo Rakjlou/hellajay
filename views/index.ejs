@@ -82,9 +82,31 @@
     <section id="work" class="section bg-accent">
       <div class="container">
         <h2><%= t('work.title', lang) %></h2>
-        <div class="empty-state">
-          <div class="empty-state-icon">&#9835;</div>
-          <p class="empty-state-text"><%= t('work.placeholder', lang) %></p>
+        <div class="audio-player-list">
+          <% if (audioFiles && audioFiles.length > 0) { %>
+            <% audioFiles.forEach(file => { %>
+              <div class="audio-player" data-audio-url="<%= file.url %>">
+                <div class="audio-player-header">
+                  <span class="audio-track-title"><%= file.title %></span>
+                  <span class="audio-time">
+                    <span class="audio-current">0:00</span> / <span class="audio-duration">0:00</span>
+                  </span>
+                </div>
+                <div class="audio-controls">
+                  <button type="button" class="audio-play-btn" aria-label="<%= t('work.play', lang) %>" data-playing="false">
+                    <span class="audio-icon-play">&#9654;</span>
+                    <span class="audio-icon-pause">&#10074;&#10074;</span>
+                  </button>
+                </div>
+                <div class="audio-waveform"></div>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <div class="empty-state">
+              <div class="empty-state-icon">&#9835;</div>
+              <p class="empty-state-text"><%= t('work.placeholder', lang) %></p>
+            </div>
+          <% } %>
         </div>
       </div>
     </section>
@@ -194,6 +216,7 @@
   </footer>
 
   <!-- Scripts -->
+  <script src="https://unpkg.com/wavesurfer.js@7"></script>
   <script>
     // Translations needed for client-side JavaScript
     window.messages = {
@@ -204,5 +227,11 @@
   <script src="/js/i18n.js"></script>
   <script src="/js/app.js"></script>
   <script src="/js/geometric-bg.js"></script>
+  <script src="/js/audio-player.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      AudioPlayer.initAll();
+    });
+  </script>
 </body>
 </html>

@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { body, validationResult } = require('express-validator');
 const escapeHtml = require('escape-html');
+const adminRouter = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -62,11 +63,30 @@ if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
   console.warn('Email credentials not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD environment variables.');
 }
 
-// Load translations at startup
-const translations = {
-  en: require('./public/locales/en.json'),
-  fr: require('./public/locales/fr.json')
-};
+// Data paths
+const DATA_DIR = path.join(__dirname, 'data');
+const LOCALES_DIR = path.join(DATA_DIR, 'locales');
+const BIO_PATH = path.join(DATA_DIR, 'bio.json');
+
+// Load translations from data/ directory
+function loadTranslations() {
+  return {
+    en: JSON.parse(fs.readFileSync(path.join(LOCALES_DIR, 'en.json'), 'utf8')),
+    fr: JSON.parse(fs.readFileSync(path.join(LOCALES_DIR, 'fr.json'), 'utf8'))
+  };
+}
+
+// Load bio from data/bio.json
+function loadBio() {
+  try {
+    return JSON.parse(fs.readFileSync(BIO_PATH, 'utf8'));
+  } catch (e) {
+    return { en: '', fr: '' };
+  }
+}
+
+let translations = loadTranslations();
+let bio = loadBio();
 
 // Configure EJS
 app.set('views', './views');
@@ -79,8 +99,19 @@ app.locals.t = (key, lang) => {
   for (const k of keys) {
     value = value?.[k];
   }
+  // Special case: bio comes from bio.json, not locale files
+  if (key === 'about.bio') {
+    return bio[lang] || value || key;
+  }
   return value || key;
 };
+
+// Reload translations once per request (not per t() call) to reflect admin changes
+app.use((req, res, next) => {
+  translations = loadTranslations();
+  bio = loadBio();
+  next();
+});
 
 // Language detection middleware
 app.use((req, res, next) => {
@@ -93,6 +124,9 @@ app.use((req, res, next) => {
 
 // Serve static files from 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve data/images for admin-uploaded profile photo
+app.use('/data/images', express.static(path.join(DATA_DIR, 'images')));
 
 // Serve only rakui-css (not entire node_modules)
 app.use('/css/rakui.css', express.static(path.join(__dirname, 'node_modules/rakui-css/dist/rakui.css')));
@@ -113,6 +147,9 @@ function getAudioFiles() {
       title: path.basename(file, path.extname(file))
     }));
 }
+
+// Admin routes
+app.use('/admin', adminRouter);
 
 // Page routes
 app.get('/', (req, res) => res.render('index', { audioFiles: getAudioFiles() }));

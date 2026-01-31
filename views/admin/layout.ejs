@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Hellajay</title>
+  <link rel="stylesheet" href="/css/rakui.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <nav class="admin-nav">
+    <div class="admin-nav-brand">HELLAJAY Admin</div>
+    <ul class="admin-nav-links">
+      <li><a href="/admin/about" class="<%= page === 'about' ? 'active' : '' %>">About</a></li>
+      <li><a href="/admin/work" class="<%= page === 'work' ? 'active' : '' %>">My Work</a></li>
+      <li><a href="/admin/translations" class="<%= page === 'translations' ? 'active' : '' %>">Translations</a></li>
+      <li><a href="/" class="admin-view-site" target="_blank">View Site →</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <% if (message) { %>
+          <div class="admin-alert admin-alert-success"><%= message %></div>
+        <% } %>
+        <% if (error) { %>
+          <div class="admin-alert admin-alert-error"><%= error %></div>
+        <% } %>
+
+        <%- body %>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

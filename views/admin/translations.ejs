@@ -1,0 +1,27 @@
+<%- include('layout', { body: `
+<h1>Translations</h1>
+
+<form action="/admin/translations" method="POST">
+  <section class="admin-section">
+    <h2>English (en.json)</h2>
+    <textarea class="form-textarea admin-json-textarea" name="en" rows="20">${JSON.stringify(en, null, 2)}</textarea>
+  </section>
+
+  <section class="admin-section">
+    <h2>French (fr.json)</h2>
+    <textarea class="form-textarea admin-json-textarea" name="fr" rows="20">${JSON.stringify(fr, null, 2)}</textarea>
+  </section>
+
+  <div class="admin-actions">
+    <button type="submit" class="btn btn-primary">Save Translations</button>
+  </div>
+</form>
+
+<section class="admin-section">
+  <h2>Help</h2>
+  <p class="admin-help">
+    Edit the JSON directly. Keep the structure intact.<br>
+    Changes take effect after server restart or page reload.
+  </p>
+</section>
+` }) %>

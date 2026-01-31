@@ -1,0 +1,29 @@
+<%- include('layout', { body: `
+<h1>My Work</h1>
+
+<section class="admin-section">
+  <h2>Upload Track</h2>
+  <form action="/admin/work/upload" method="POST" enctype="multipart/form-data" class="admin-form-inline">
+    <input type="file" name="audio" accept=".mp3,.wav,.ogg,.m4a,.flac" required>
+    <button type="submit" class="btn btn-primary">Upload</button>
+  </form>
+  <p class="admin-help">Accepted: mp3, wav, ogg, m4a, flac. Max 50MB. Filename becomes track title.</p>
+</section>
+
+<section class="admin-section">
+  <h2>Tracks</h2>
+  ${audioFiles.length === 0 ? '<p class="admin-empty">No tracks uploaded yet.</p>' : ''}
+  <ul class="admin-track-list">
+    ${audioFiles.map(file => `
+      <li class="admin-track-item">
+        <span class="admin-track-title">${file.title}</span>
+        <span class="admin-track-filename">${file.filename}</span>
+        <form action="/admin/work/delete" method="POST" class="admin-delete-form" onsubmit="return confirm('Delete this track?')">
+          <input type="hidden" name="filename" value="${file.filename}">
+          <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+        </form>
+      </li>
+    `).join('')}
+  </ul>
+</section>
+` }) %>

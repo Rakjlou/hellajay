@@ -2,8 +2,6 @@
   "nav": {
     "about": "A propos",
     "work": "Mon travail",
-    "bands": "Mes groupes",
-    "services": "Services",
     "contact": "Contact"
   },
   "about": {
@@ -16,33 +14,6 @@
     "trackTitle": "Mix Exemple",
     "play": "Lecture",
     "pause": "Pause"
-  },
-  "bands": {
-    "title": "Mes groupes",
-    "colossus": {
-      "name": "Colossus of Destiny",
-      "description": "Colossus of Destiny est né en région parisienne en 2010. Après deux EPs et un premier album, 'In Lesser Brightness' (2013), inspiré par Mastodon, Gojira et Baroness, le groupe part en tournée à Cuba en 2017. Leur LP 'Last Call' (2020) intègre des éléments progressifs et post-rock, avec des influences d'Underoath et Devil Sold His Soul. Avec 'Peter Palmer' (2022), le groupe adopte une approche plus moderne et hardcore. En 2024, 'Beyond The Shallow Mind' poursuit cette direction. En 2025, 'Jerry June' affirme leur identité post-metal avec un morceau brut et intense, accompagné d'un clip cinématographique."
-    },
-    "ways": {
-      "name": "Ways.",
-      "description": "Ways. explore depuis 2016 un mélange d’Alternatif, de Metal et de Post-Hardcore, influencé par des groupes tels que Architects ou Underoath. Le groupe a eu l’occasion de partager la scène avec Sidilarsen, Bukowski, Resolve, Napoleon, Svalbard, Alpha Wolf, Dropdead Chaos ou Akiavel, de tourner en Espagne, de jouer à Cuba en 2019 et de se produire au Vagos Metal Fest aux côtés de Dagoba et Jinjer. En 2024/2025, Ways. défend son EP \"Are we still alive?\" lors d’une tournée européenne, avec des passages remarqués au Kave Fest, In Your Fest, Foud’Rock, Viry Tattoo Festival ou encore La Tour Mets Les Voiles. Le groupe travaille actuellement sur son premier album, avec l’ambition d’avancer encore plus loin."
-    }
-  },
-  "services": {
-    "title": "Services",
-    "mixing": {
-      "title": "Mixage",
-      "description": "Je fais sonner ton morceau moderne, percutant et pro. Sample de mix gratuit pour commencer en confiance !"
-    },
-    "mastering": {
-      "title": "Mastering",
-      "description": "La touche finale que ta musique mérite. Fort, clair, prêt pour les plateformes de streaming."
-    },
-    "midi": {
-      "title": "Batterie MIDI",
-      "description": "En tant que batteur, je peux faire sonner ta batterie MIDI comme si un humain l'avait jouée. Rendu réaliste garanti."
-    },
-    "cta": "Commander sur Fiverr"
   },
   "contact": {
     "title": "Contact",

@@ -17,8 +17,6 @@
       <ul class="nav-links hide-mobile">
         <li><a href="#about" class="nav-link"><%= t('nav.about', lang) %></a></li>
         <li><a href="#work" class="nav-link"><%= t('nav.work', lang) %></a></li>
-        <li><a href="#bands" class="nav-link"><%= t('nav.bands', lang) %></a></li>
-        <li><a href="#services" class="nav-link"><%= t('nav.services', lang) %></a></li>
         <li><a href="#contact" class="nav-link"><%= t('nav.contact', lang) %></a></li>
         <li>
           <select class="form-select language-selector" aria-label="Select language">
@@ -48,8 +46,6 @@
     <ul class="nav-mobile-links">
       <li><a href="#about" class="nav-mobile-link"><%= t('nav.about', lang) %></a></li>
       <li><a href="#work" class="nav-mobile-link"><%= t('nav.work', lang) %></a></li>
-      <li><a href="#bands" class="nav-mobile-link"><%= t('nav.bands', lang) %></a></li>
-      <li><a href="#services" class="nav-mobile-link"><%= t('nav.services', lang) %></a></li>
       <li><a href="#contact" class="nav-mobile-link"><%= t('nav.contact', lang) %></a></li>
       <li>
         <select class="form-select language-selector" aria-label="Select language">
@@ -111,62 +107,6 @@
       </div>
     </section>
 
-    <!-- My Bands Section -->
-    <section id="bands" class="section">
-      <div class="container">
-        <h2><%= t('bands.title', lang) %></h2>
-        <div class="card-grid-2">
-          <!-- Colossus of Destiny -->
-          <div class="card">
-            <img src="/images/cod.jpg" alt="Colossus of Destiny" class="band-photo">
-            <h3 class="card-title"><%= t('bands.colossus.name', lang) %></h3>
-            <p class="card-text"><%= t('bands.colossus.description', lang) %></p>
-          </div>
-
-          <!-- Ways. -->
-          <div class="card">
-            <img src="/images/ways.jpg" alt="Ways." class="band-photo">
-            <h3 class="card-title"><%= t('bands.ways.name', lang) %></h3>
-            <p class="card-text"><%= t('bands.ways.description', lang) %></p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Services Section -->
-    <section id="services" class="section bg-accent">
-      <div class="container">
-        <h2><%= t('services.title', lang) %></h2>
-        <div class="card-grid">
-          <!-- Mixing -->
-          <div class="card">
-            <h3 class="card-title"><%= t('services.mixing.title', lang) %></h3>
-            <p class="card-text"><%= t('services.mixing.description', lang) %></p>
-          </div>
-
-          <!-- Mastering -->
-          <div class="card">
-            <h3 class="card-title"><%= t('services.mastering.title', lang) %></h3>
-            <p class="card-text"><%= t('services.mastering.description', lang) %></p>
-          </div>
-
-          <!-- MIDI Drums -->
-          <div class="card">
-            <h3 class="card-title"><%= t('services.midi.title', lang) %></h3>
-            <p class="card-text"><%= t('services.midi.description', lang) %></p>
-          </div>
-        </div>
-
-        <div class="center-text mt-xl">
-          <a href="https://www.fiverr.com/hellajay"
-             target="_blank"
-             rel="noopener noreferrer"
-             class="btn btn-primary btn-lg">
-            <%= t('services.cta', lang) %>
-          </a>
-        </div>
-      </div>
-    </section>
 
     <!-- Contact Section -->
     <section id="contact" class="section">

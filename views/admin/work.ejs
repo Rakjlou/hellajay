@@ -18,7 +18,7 @@
       <li class="admin-track-item">
         <span class="admin-track-title">${file.title}</span>
         <span class="admin-track-filename">${file.filename}</span>
-        <form action="/admin/work/delete" method="POST" class="admin-delete-form" onsubmit="return confirm('Delete this track?')">
+        <form action="/admin/work/delete" method="POST" class="admin-delete-form">
           <input type="hidden" name="filename" value="${file.filename}">
           <button type="submit" class="btn btn-sm btn-danger">Delete</button>
         </form>
@@ -26,4 +26,14 @@
     `).join('')}
   </ul>
 </section>
+
+<script>
+document.querySelectorAll('.admin-delete-form').forEach(form => {
+  form.addEventListener('submit', function(e) {
+    if (!confirm('Supprimer cette piste ?')) {
+      e.preventDefault();
+    }
+  });
+});
+</script>
 ` }) %>

@@ -20,6 +20,8 @@ function bindContactForm() {
 
       const formData = new FormData(form);
       const data = Object.fromEntries(formData);
+      // Handle multiple checkboxes for services
+      data.services = formData.getAll('services');
 
       const submitBtn = form.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;

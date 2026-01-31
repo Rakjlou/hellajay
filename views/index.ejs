@@ -174,21 +174,60 @@
         <h2><%= t('contact.title', lang) %></h2>
         <form id="contact-form" class="form form-wide">
           <div class="form-group">
-            <label class="form-label form-label-required"><%= t('contact.name', lang) %></label>
-            <input type="text"
-                   class="form-input"
-                   name="name"
-                   required
-                   placeholder="<%= t('contact.name', lang) %>">
-          </div>
-
-          <div class="form-group">
             <label class="form-label form-label-required"><%= t('contact.email', lang) %></label>
             <input type="email"
                    class="form-input"
                    name="email"
                    required
                    placeholder="<%= t('contact.email', lang) %>">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><%= t('contact.bandName', lang) %></label>
+            <input type="text"
+                   class="form-input"
+                   name="bandName"
+                   placeholder="<%= t('contact.bandName', lang) %>">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><%= t('contact.numberOfSongs', lang) %></label>
+            <input type="text"
+                   class="form-input"
+                   name="numberOfSongs"
+                   placeholder="<%= t('contact.numberOfSongsPlaceholder', lang) %>">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><%= t('contact.links', lang) %></label>
+            <input type="text"
+                   class="form-input"
+                   name="links"
+                   placeholder="<%= t('contact.linksPlaceholder', lang) %>">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><%= t('contact.servicesLabel', lang) %></label>
+            <label class="form-check">
+              <input type="checkbox" class="form-check-input" name="services" value="editing">
+              <span class="form-check-label"><%= t('contact.services.editing', lang) %></span>
+            </label>
+            <label class="form-check">
+              <input type="checkbox" class="form-check-input" name="services" value="mixing">
+              <span class="form-check-label"><%= t('contact.services.mixing', lang) %></span>
+            </label>
+            <label class="form-check">
+              <input type="checkbox" class="form-check-input" name="services" value="mastering">
+              <span class="form-check-label"><%= t('contact.services.mastering', lang) %></span>
+            </label>
+            <label class="form-check">
+              <input type="checkbox" class="form-check-input" name="services" value="production">
+              <span class="form-check-label"><%= t('contact.services.production', lang) %></span>
+            </label>
+            <label class="form-check">
+              <input type="checkbox" class="form-check-input" name="services" value="midiDrums">
+              <span class="form-check-label"><%= t('contact.services.midiDrums', lang) %></span>
+            </label>
           </div>
 
           <div class="form-group">

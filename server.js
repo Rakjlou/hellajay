@@ -87,33 +87,42 @@ app.get('/fr', (req, res) => res.render('index', { audioFiles: getAudioFiles() }
 
 // API endpoint for contact form
 app.post('/api/contact', async (req, res) => {
-  const { name, email, message } = req.body;
+  const { email, bandName, numberOfSongs, links, services, message } = req.body;
 
-  // Validate required fields
-  if (!name || !email || !message) {
+  // Validate required fields (only email and message are required)
+  if (!email || !message) {
     return res.status(400).json({
       success: false,
-      error: 'All fields are required'
+      error: 'Email and message are required'
     });
   }
 
-  console.log('Contact form submission:', { name, email, message });
+  // Handle services - can be a string (single checkbox) or array (multiple checkboxes)
+  const selectedServices = services
+    ? (Array.isArray(services) ? services : [services]).join(', ')
+    : 'None selected';
+
+  console.log('Contact form submission:', { email, bandName, numberOfSongs, links, services: selectedServices, message });
 
   // Send email if credentials are configured
   const contactEmail = process.env.CONTACT_EMAIL;
   if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD && contactEmail) {
     try {
+      const subjectName = bandName || email;
       await emailTransporter.sendMail({
         from: process.env.GMAIL_USER,
         replyTo: email,
         to: contactEmail,
         cc: email,
-        subject: `[Hellajay] Message from ${name}`,
-        text: `New message from the Hellajay website contact form:\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+        subject: `[Hellajay] Message from ${subjectName}`,
+        text: `New message from the Hellajay website contact form:\n\nEmail: ${email}\nBand/Project Name: ${bandName || 'Not provided'}\nNumber of songs: ${numberOfSongs || 'Not provided'}\nLinks: ${links || 'Not provided'}\nServices: ${selectedServices}\n\nMessage:\n${message}`,
         html: `
           <h2>New message from the Hellajay website</h2>
-          <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Band/Project Name:</strong> ${bandName || 'Not provided'}</p>
+          <p><strong>Number of songs:</strong> ${numberOfSongs || 'Not provided'}</p>
+          <p><strong>Links:</strong> ${links || 'Not provided'}</p>
+          <p><strong>Services:</strong> ${selectedServices}</p>
           <hr>
           <p><strong>Message:</strong></p>
           <p>${message.replace(/\n/g, '<br>')}</p>

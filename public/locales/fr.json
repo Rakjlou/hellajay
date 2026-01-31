@@ -46,8 +46,20 @@
   },
   "contact": {
     "title": "Contact",
-    "name": "Nom",
     "email": "Email",
+    "bandName": "Nom du groupe/projet",
+    "numberOfSongs": "Nombre de morceaux",
+    "numberOfSongsPlaceholder": "ex: 3 morceaux",
+    "links": "Liens vers votre musique ou réseaux sociaux",
+    "linksPlaceholder": "ex: Spotify, Bandcamp, Instagram...",
+    "servicesLabel": "Sélectionnez les services dont vous avez besoin",
+    "services": {
+      "editing": "Editing",
+      "mixing": "Mixage",
+      "mastering": "Mastering",
+      "production": "Production",
+      "midiDrums": "Batterie MIDI"
+    },
     "message": "Message",
     "submit": "Envoyer",
     "success": "Message envoyé ! Merci de nous avoir contacté.",

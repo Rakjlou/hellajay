@@ -46,8 +46,20 @@
   },
   "contact": {
     "title": "Contact",
-    "name": "Name",
     "email": "Email",
+    "bandName": "Band/Project Name",
+    "numberOfSongs": "Number of songs",
+    "numberOfSongsPlaceholder": "e.g., 3 songs",
+    "links": "Links to your music or social media",
+    "linksPlaceholder": "e.g., Spotify, Bandcamp, Instagram...",
+    "servicesLabel": "Select the services you need",
+    "services": {
+      "editing": "Editing",
+      "mixing": "Mixing",
+      "mastering": "Mastering",
+      "production": "Production",
+      "midiDrums": "MIDI Drums"
+    },
     "message": "Message",
     "submit": "Send Message",
     "success": "Message sent! Thank you for reaching out.",

@@ -7,21 +7,38 @@
     <input type="file" name="audio" accept=".mp3,.wav,.ogg,.m4a,.flac" required>
     <button type="submit" class="btn btn-primary">Upload</button>
   </form>
-  <p class="admin-help">Accepted: mp3, wav, ogg, m4a, flac. Max 50MB. Filename becomes track title.</p>
+  <p class="admin-help">Accepted: mp3, wav, ogg, m4a, flac. Max 50MB.</p>
 </section>
 
 <section class="admin-section">
   <h2>Tracks</h2>
-  ${audioFiles.length === 0 ? '<p class="admin-empty">No tracks uploaded yet.</p>' : ''}
+  ${tracks.length === 0 ? '<p class="admin-empty">No tracks uploaded yet.</p>' : ''}
   <ul class="admin-track-list">
-    ${audioFiles.map(file => `
+    ${tracks.map((track, index) => `
       <li class="admin-track-item">
-        <span class="admin-track-title">${file.title}</span>
-        <span class="admin-track-filename">${file.filename}</span>
-        <form action="/admin/work/delete" method="POST" class="admin-delete-form">
-          <input type="hidden" name="filename" value="${file.filename}">
-          <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+        <span class="admin-track-order">#${index + 1}</span>
+        <form action="/admin/work/update" method="POST" class="admin-track-edit-form">
+          <input type="hidden" name="filename" value="${track.filename}">
+          <input type="text" name="title" value="${track.title}" class="admin-track-title-input">
+          <button type="submit" class="btn btn-sm btn-secondary">Save</button>
         </form>
+        <span class="admin-track-filename">${track.filename}</span>
+        <div class="admin-track-actions">
+          <form action="/admin/work/reorder" method="POST" class="admin-reorder-form">
+            <input type="hidden" name="filename" value="${track.filename}">
+            <input type="hidden" name="direction" value="up">
+            <button type="submit" class="btn btn-sm btn-icon" ${index === 0 ? 'disabled' : ''} title="Move up">&#9650;</button>
+          </form>
+          <form action="/admin/work/reorder" method="POST" class="admin-reorder-form">
+            <input type="hidden" name="filename" value="${track.filename}">
+            <input type="hidden" name="direction" value="down">
+            <button type="submit" class="btn btn-sm btn-icon" ${index === tracks.length - 1 ? 'disabled' : ''} title="Move down">&#9660;</button>
+          </form>
+          <form action="/admin/work/delete" method="POST" class="admin-delete-form">
+            <input type="hidden" name="filename" value="${track.filename}">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </div>
       </li>
     `).join('')}
   </ul>

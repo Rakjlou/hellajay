@@ -67,6 +67,7 @@ if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
 const DATA_DIR = path.join(__dirname, 'data');
 const LOCALES_DIR = path.join(DATA_DIR, 'locales');
 const BIO_PATH = path.join(DATA_DIR, 'bio.json');
+const TRACKS_PATH = path.join(DATA_DIR, 'tracks.json');
 
 // Load translations from data/ directory
 function loadTranslations() {
@@ -85,8 +86,23 @@ function loadBio() {
   }
 }
 
+// Load tracks from data/tracks.json
+function loadTracksData() {
+  try {
+    return JSON.parse(fs.readFileSync(TRACKS_PATH, 'utf8'));
+  } catch (e) {
+    return { tracks: [] };
+  }
+}
+
 let translations = loadTranslations();
 let bio = loadBio();
+let tracksData = loadTracksData();
+
+// Reload tracks (called by admin after modifications)
+function reloadTracks() {
+  tracksData = loadTracksData();
+}
 
 // Configure EJS
 app.set('views', './views');
@@ -134,18 +150,12 @@ app.use('/css/rakui.css', express.static(path.join(__dirname, 'node_modules/raku
 // Parse JSON bodies (for contact form API)
 app.use(express.json());
 
-// Scan work directory for audio files
+// Get audio files from tracks.json (order = index in array)
 function getAudioFiles() {
-  const workDir = path.join(__dirname, 'public', 'work');
-  if (!fs.existsSync(workDir)) return [];
-
-  const extensions = ['.mp3', '.wav', '.ogg', '.m4a', '.flac'];
-  return fs.readdirSync(workDir)
-    .filter(file => extensions.includes(path.extname(file).toLowerCase()))
-    .map(file => ({
-      url: `/work/${encodeURIComponent(file)}`,
-      title: path.basename(file, path.extname(file))
-    }));
+  return tracksData.tracks.map(track => ({
+    url: `/work/${encodeURIComponent(track.filename)}`,
+    title: track.title
+  }));
 }
 
 // Admin routes
@@ -265,3 +275,6 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
+
+// Export for admin routes
+module.exports = { reloadTracks, TRACKS_PATH };

@@ -13,6 +13,7 @@ const LOCALES_DIR = path.join(DATA_DIR, 'locales');
 const IMAGES_DIR = path.join(DATA_DIR, 'images');
 const WORK_DIR = path.join(__dirname, '..', 'public', 'work');
 const BIO_PATH = path.join(DATA_DIR, 'bio.json');
+const TRACKS_PATH = path.join(DATA_DIR, 'tracks.json');
 
 // Rate limiting for admin routes
 // 100 requests per minute - generous for normal usage, still blocks brute-force
@@ -134,15 +135,24 @@ function saveJson(filepath, data) {
   fs.writeFileSync(filepath, JSON.stringify(data, null, 2));
 }
 
-function getAudioFiles() {
-  if (!fs.existsSync(WORK_DIR)) return [];
-  const extensions = ['.mp3', '.wav', '.ogg', '.m4a', '.flac'];
-  return fs.readdirSync(WORK_DIR)
-    .filter(file => extensions.includes(path.extname(file).toLowerCase()))
-    .map(file => ({
-      filename: file,
-      title: path.basename(file, path.extname(file))
-    }));
+function loadTracksJson() {
+  try {
+    return JSON.parse(fs.readFileSync(TRACKS_PATH, 'utf8'));
+  } catch (e) {
+    return { tracks: [] };
+  }
+}
+
+function saveTracksJson(data) {
+  fs.writeFileSync(TRACKS_PATH, JSON.stringify(data, null, 2));
+}
+
+// Get reloadTracks from server.js (lazy-loaded to avoid circular dependency)
+function reloadTracks() {
+  const server = require('../server');
+  if (server && server.reloadTracks) {
+    server.reloadTracks();
+  }
 }
 
 // Routes
@@ -181,10 +191,10 @@ router.post('/about/photo', imageUpload.single('photo'), (req, res) => {
 
 // Work page - manage audio files
 router.get('/work', (req, res) => {
-  const audioFiles = getAudioFiles();
+  const tracksData = loadTracksJson();
   const message = req.query.message || null;
   const error = req.query.error || null;
-  res.render('admin/work', { audioFiles, message, error, page: 'work' });
+  res.render('admin/work', { tracks: tracksData.tracks, message, error, page: 'work' });
 });
 
 // Upload audio
@@ -192,6 +202,16 @@ router.post('/work/upload', audioUpload.single('audio'), (req, res) => {
   if (!req.file) {
     return res.redirect('/admin/work?error=No file uploaded');
   }
+
+  // Add entry to tracks.json
+  const tracksData = loadTracksJson();
+  const filename = req.file.filename;
+  const title = path.basename(filename, path.extname(filename));
+
+  tracksData.tracks.push({ filename, title });
+  saveTracksJson(tracksData);
+  reloadTracks();
+
   res.redirect('/admin/work?message=Track uploaded successfully');
 });
 
@@ -211,12 +231,90 @@ router.post('/work/delete', express.urlencoded({ extended: false }), (req, res) 
     return res.redirect('/admin/work?error=Invalid path');
   }
 
+  // Remove entry from tracks.json
+  const tracksData = loadTracksJson();
+  const index = tracksData.tracks.findIndex(t => t.filename === filename);
+  if (index === -1) {
+    return res.redirect('/admin/work?error=Track not found in database');
+  }
+
+  tracksData.tracks.splice(index, 1);
+  saveTracksJson(tracksData);
+
+  // Delete the actual file
   if (fs.existsSync(filepath)) {
     fs.unlinkSync(filepath);
-    res.redirect('/admin/work?message=Track deleted successfully');
-  } else {
-    res.redirect('/admin/work?error=File not found');
   }
+
+  reloadTracks();
+  res.redirect('/admin/work?message=Track deleted successfully');
+});
+
+// Update track title
+router.post('/work/update', express.urlencoded({ extended: false }), (req, res) => {
+  const { filename, title } = req.body;
+
+  if (!filename || !title) {
+    return res.redirect('/admin/work?error=Missing filename or title');
+  }
+
+  // Path traversal protection
+  if (filename.includes('/') || filename.includes('\\') || filename.includes('..')) {
+    return res.redirect('/admin/work?error=Invalid filename');
+  }
+
+  const tracksData = loadTracksJson();
+  const track = tracksData.tracks.find(t => t.filename === filename);
+
+  if (!track) {
+    return res.redirect('/admin/work?error=Track not found');
+  }
+
+  track.title = title.trim();
+  saveTracksJson(tracksData);
+  reloadTracks();
+
+  res.redirect('/admin/work?message=Title updated successfully');
+});
+
+// Reorder tracks (swap positions)
+router.post('/work/reorder', express.urlencoded({ extended: false }), (req, res) => {
+  const { filename, direction } = req.body;
+
+  if (!filename || !direction) {
+    return res.redirect('/admin/work?error=Missing parameters');
+  }
+
+  // Path traversal protection
+  if (filename.includes('/') || filename.includes('\\') || filename.includes('..')) {
+    return res.redirect('/admin/work?error=Invalid filename');
+  }
+
+  const tracksData = loadTracksJson();
+  const index = tracksData.tracks.findIndex(t => t.filename === filename);
+
+  if (index === -1) {
+    return res.redirect('/admin/work?error=Track not found');
+  }
+
+  let newIndex;
+  if (direction === 'up' && index > 0) {
+    newIndex = index - 1;
+  } else if (direction === 'down' && index < tracksData.tracks.length - 1) {
+    newIndex = index + 1;
+  } else {
+    return res.redirect('/admin/work');
+  }
+
+  // Swap positions
+  const temp = tracksData.tracks[index];
+  tracksData.tracks[index] = tracksData.tracks[newIndex];
+  tracksData.tracks[newIndex] = temp;
+
+  saveTracksJson(tracksData);
+  reloadTracks();
+
+  res.redirect('/admin/work?message=Track reordered');
 });
 
 // Translations page

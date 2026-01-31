@@ -138,15 +138,32 @@ main h1 {
   gap: 1rem;
   padding: 0.75rem 0;
   border-bottom: 1px solid var(--color-border, #333);
+  flex-wrap: wrap;
 }
 
 .admin-track-item:last-child {
   border-bottom: none;
 }
 
-.admin-track-title {
+.admin-track-order {
+  font-weight: bold;
+  color: var(--color-text-muted, #888);
+  min-width: 2rem;
+}
+
+.admin-track-edit-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
   flex: 1;
-  font-weight: 500;
+  margin: 0;
+}
+
+.admin-track-title-input {
+  flex: 1;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.9rem;
+  min-width: 150px;
 }
 
 .admin-track-filename {
@@ -154,8 +171,36 @@ main h1 {
   font-size: 0.85rem;
 }
 
+.admin-track-actions {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.admin-reorder-form,
 .admin-delete-form {
   margin: 0;
+}
+
+.btn-icon {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.btn-icon:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--color-bg-alt, #333);
+  color: var(--color-text, #fff);
+  border: 1px solid var(--color-border, #555);
+}
+
+.btn-secondary:hover {
+  background: var(--color-border, #555);
 }
 
 .admin-actions {
@@ -195,5 +240,15 @@ main h1 {
   .admin-track-item {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .admin-track-edit-form {
+    width: 100%;
+  }
+
+  .admin-track-actions {
+    width: 100%;
+    justify-content: flex-end;
   }
 }

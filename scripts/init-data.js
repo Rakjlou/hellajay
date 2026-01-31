@@ -26,6 +26,13 @@ function copyIfMissing(src, dest, description) {
   }
 }
 
+function createTracksJson() {
+  const tracksPath = path.join(DATA_DIR, 'tracks.json');
+  if (fs.existsSync(tracksPath)) return;
+  fs.writeFileSync(tracksPath, JSON.stringify({ tracks: [] }, null, 2));
+  console.log('Created: data/tracks.json');
+}
+
 function createBioJson() {
   const bioPath = path.join(DATA_DIR, 'bio.json');
   if (fs.existsSync(bioPath)) return;
@@ -95,6 +102,9 @@ function main() {
 
   // Create bio.json from locale files
   createBioJson();
+
+  // Create tracks.json
+  createTracksJson();
 
   console.log('Done! data/ directory initialized.');
 }
